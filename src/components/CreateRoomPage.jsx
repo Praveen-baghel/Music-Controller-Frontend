@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Grid,
@@ -12,12 +12,16 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-export default function CreateRoomPage() {
+import { Roofing } from "@mui/icons-material";
+export default function CreateRoomPage(props) {
   const defaultVotes = 2;
   const navigate = useNavigate();
-  const [guestCanPause, setGuestCanPause] = useState(true);
-  const [votesToSkip, setVotesToSkip] = useState(defaultVotes);
-
+  const [guestCanPause, setGuestCanPause] = useState(
+    props.data ? props.data.guestCanPause : true
+  );
+  const [votesToSkip, setVotesToSkip] = useState(
+    props.data ? props.data.votesToSkip : defaultVotes
+  );
   const handleVotesChange = (e) => {
     setVotesToSkip(e.target.value);
   };
@@ -52,7 +56,7 @@ export default function CreateRoomPage() {
       <Grid item xs={12} align="center">
         <FormControl component="fieldset">
           <FormHelperText>
-            <div align="center">Guest Control of Playback State</div>
+            <span align="center">Guest Control of Playback State</span>
           </FormHelperText>
           <RadioGroup
             row
@@ -60,13 +64,13 @@ export default function CreateRoomPage() {
             onChange={handleGuestCanPauseChange}
           >
             <FormControlLabel
-              value="true"
+              value={guestCanPause}
               control={<Radio color="primary" />}
               label="Play/Pause"
               labelPlacement="bottom"
             />
             <FormControlLabel
-              value="false"
+              value={!guestCanPause}
               control={<Radio color="secondary" />}
               label="No Control"
               labelPlacement="bottom"
@@ -79,12 +83,12 @@ export default function CreateRoomPage() {
           <TextField
             required
             type="number"
-            defaultValue={defaultVotes}
+            defaultValue={votesToSkip}
             inputProps={{ min: 1, style: { textAlign: "center" } }}
             onChange={handleVotesChange}
           />
           <FormHelperText>
-            <div align="center">Votes Required To Skip Song</div>
+            <span align="center">Votes Required To Skip Song</span>
           </FormHelperText>
         </FormControl>
       </Grid>

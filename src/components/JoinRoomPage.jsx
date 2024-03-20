@@ -34,7 +34,6 @@ export default function JoinRoomPage() {
       .catch((error) => {
         console.log(error);
       });
-    console.log(roomData.roomCode);
   };
   return (
     <Grid container spacing={1}>

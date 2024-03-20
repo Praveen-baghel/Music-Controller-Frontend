@@ -20,7 +20,6 @@ export default function HomePage() {
           throw new Error("Failed to fetch room code");
         }
         const data = await response.json();
-        console.log(data);
         setRoomCode(data.code);
       } catch (error) {
         console.error("Error fetching room code:", error);

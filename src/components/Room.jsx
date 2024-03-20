@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Button, Typography } from "@material-ui/core";
 import { Link, useNavigate, useParams } from "react-router-dom";
-
+import CreateRoomPage from "./CreateRoomPage";
 export default function Room() {
   const navigate = useNavigate();
   let { roomCode } = useParams();
@@ -10,6 +10,7 @@ export default function Room() {
     guestCanPause: "",
     isHost: "",
   });
+  const [showSettings, setshowSettings] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -17,14 +18,22 @@ export default function Room() {
   }, []);
 
   const getRoomDetails = () => {
-    fetch("http://localhost:8000/api/room/" + roomCode + "/")
+    const requestOptions = {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    };
+    fetch(
+      "http://localhost:8000/api/room/?room_code=" + roomCode,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data["is_found"] == true) {
           setRoom({
-            votesToSkip: data["data"]["votes_to_skip"],
-            guestCanPause: data["data"]["guest_can_pause"],
-            isHost: data["data"]["is_host"],
+            votesToSkip: data["votes_to_skip"],
+            guestCanPause: data["guest_can_pause"],
+            isHost: data["is_host"],
           });
           setIsLoading(false);
         } else {
@@ -51,6 +60,50 @@ export default function Room() {
         console.log(error);
       });
   };
+  const renderSettings = () => {
+    return (
+      <Grid container spacing={1}>
+        <Grid item xs={12} align="center">
+          <CreateRoomPage
+            data={{
+              update: true,
+              guestCanPause: room.guestCanPause,
+              votesToSkip: room.votesToSkip,
+              updateCallback: () => {}, // Suggestion to provide a real callback function
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} align="center">
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setshowSettings(false)} // Changed to false to close settings
+          >
+            Close
+          </Button>
+        </Grid>
+      </Grid>
+    );
+  };
+  const renderSettingsButton = () => {
+    return (
+      <Grid item xs={12} align="center">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            setshowSettings(true);
+          }}
+        >
+          Settings
+        </Button>
+      </Grid>
+    );
+  };
+
+  if (showSettings) {
+    return renderSettings();
+  }
 
   return (
     <Grid container spacing={1}>
@@ -74,6 +127,7 @@ export default function Room() {
           Host: {room.isHost.toString()}
         </Typography>
       </Grid>
+      {room.isHost ? renderSettingsButton() : null}
       <Grid item xs={12} align="center">
         <Button
           variant="contained"
