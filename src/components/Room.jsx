@@ -66,6 +66,7 @@ export default function Room() {
         <Grid item xs={12} align="center">
           <CreateRoomPage
             data={{
+              roomCode: roomCode,
               update: true,
               guestCanPause: room.guestCanPause,
               votesToSkip: room.votesToSkip,
